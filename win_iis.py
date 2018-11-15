@@ -12,7 +12,10 @@ Microsoft IIS site management via WebAdministration powershell module
 from __future__ import absolute_import
 
 # Import salt libs
-import salt.utils
+try:
+    from salt.utils import platform
+except ImportError:
+    import salt.utils as platform
 
 # Define the module's virtual name
 __virtualname__ = 'win_iis'
@@ -22,7 +25,7 @@ def __virtual__():
     '''
     Load only on Windows
     '''
-    if salt.utils.is_windows():
+    if platform.is_windows():
         return __virtualname__
     return (False, 'Module win_iis: module only works on Windows systems')
 

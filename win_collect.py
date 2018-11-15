@@ -6,7 +6,10 @@ import string
 
 # Import salt libs
 import salt.ext.six as six
-import salt.utils
+try:
+    from salt.utils import platform
+except ImportError:
+    import salt.utils as platform
 
 try:
     import win32api
@@ -26,7 +29,7 @@ def __virtual__():
     '''
     Only works on Windows systems
     '''
-    if salt.utils.is_windows():
+    if platform.is_windows():
         return __virtualname__
     return False
 
@@ -39,17 +42,6 @@ def disks():
     result = []
     if __salt__['grains.get']('os_family') != 'Windows':
         return result
-
-    # Import python libs
-
-    # Import salt libs
-    import salt.ext.six as six
-    import salt.utils
-
-    try:
-        import win32api
-    except ImportError:
-        pass
 
     ret = {}
     drive_bitmask = ctypes.windll.kernel32.GetLogicalDrives()
