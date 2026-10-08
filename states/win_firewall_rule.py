@@ -9,6 +9,9 @@ import ipaddress
 
 from salt.exceptions import CommandExecutionError
 
+# Enum values returned by Windows (Allow, Inbound, TCP) may be written in any case in the SLS
+_CASE_INSENSITIVE_KEYS = ('direction', 'action', 'protocol')
+
 
 def __virtual__():
     if 'alkivi_win_firewall.ps_get_rule' in __salt__:
@@ -278,6 +281,9 @@ def present(
     for key in desired:
         if key not in current_norm:
             continue
+        if key in _CASE_INSENSITIVE_KEYS and desired[key] is not None and current_norm[key] is not None:
+            if desired[key].casefold() == current_norm[key].casefold():
+                continue
         if desired[key] != current_norm[key]:
             diff[key] = explicit.get(key)
     if not diff:
